@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einsatzstatistik Universal Tool</title>
+    <style>
+        :root {
+            --color-bg-primary: #fcfcf9;
+            --color-bg-secondary: #fffffe;
+            --color-text-primary: #13343b;
+            --color-text-secondary: #626c7c;
+            --color-accent: #218d8d;
+            --color-accent-hover: #1d747f;
+            --color-border: rgba(94, 82, 64, 0.2);
+            --color-error: #c0152f;
+            --color-success: #218d8d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-text-primary);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem 0;
+            color: var(--color-text-primary);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 0.75rem 0;
+            color: var(--color-accent);
+        }
+
+        .mode-selection {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .mode-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .mode-button {
+            background: var(--color-bg-primary);
+            border: 2px solid var(--color-border);
+            border-radius: 8px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .mode-button:hover {
+            border-color: var(--color-accent);
+            background: var(--color-bg-secondary);
+        }
+
+        .mode-button h3 {
+            margin: 0 0 0.5rem 0;
+        }
+
+        .mode-button p {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .upload-section {
+            background: var(--color-bg-secondary);
+            border: 2px dashed var(--color-border);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .btn {
+            background: var(--color-accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.2s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background: var(--color-accent-hover);
+        }
+
+        .btn-secondary {
+            background: rgba(94, 82, 64, 0.12);
+            color: var(--color-text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(94, 82, 64, 0.2);
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .status-success {
+            background: rgba(33, 141, 141, 0.1);
+            border: 1px solid var(--color-success);
+            color: var(--color-success);
+        }
+
+        .status-error {
+            background: rgba(192, 21, 47, 0.1);
+            border: 1px solid var(--color-error);
+            color: var(--color-error);
+        }
+
+        .vehicle-config {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .vehicle-item {
+            background: var(--color-bg-primary);
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .vehicle-item label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .vehicle-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .config-section {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .summary-card .label {
+            font-size: 0.875rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-card .value {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        .results-section {
+            margin-top: 2rem;
+        }
+
+        .vehicle-result {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vehicle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        .vehicle-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        .vehicle-total {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--color-accent);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        th {
+            background: var(--color-bg-primary);
+            font-weight: 600;
+            color: var(--color-text-primary);
+        }
+
+        tr:hover {
+            background: var(--color-bg-primary);
+        }
+
+        .overtime-cell {
+            color: var(--color-accent);
+            font-weight: 500;
+        }
+
+        .export-section {
+            margin-top: 2rem;
+            text-align: right;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .format-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .format-old {
+            background: rgba(192, 21, 47, 0.1);
+            color: var(--color-error);
+        }
+
+        .format-new {
+            background: rgba(33, 141, 141, 0.1);
+            color: var(--color-success);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Einsatzstatistik Universal Tool</h1>
+
+        <div id="modeSelection" class="mode-selection">
+            <h2>Was möchtest du auswerten?</h2>
+            <div class="mode-buttons">
+                <div class="mode-button" onclick="selectMode('overtime')">
+                    <h3>Überstundenauswertung</h3>
+                    <p>Berechne Überstunden für ausgewählte Fahrzeuge basierend auf Schichtmodellen</p>
+                </div>
+                <div class="mode-button" onclick="selectMode('statistics')">
+                    <h3>Statistikarbeit-Assistenz</h3>
+                    <p>Detaillierte Einsatzstatistik pro Fahrzeug mit Alarmart-Analyse</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="dataInput" class="upload-section hidden">
+            <h2>Einsatzliste einfügen</h2>
+            <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                Kopiere deine Einsatzliste aus Excel und füge sie hier ein (inkl. Spaltenüberschriften)<br>
+                <strong>Unterstützt beide Formate:</strong> Alt (Rufname, Time Alarm) und Neu (Funkrufname, AlarmierungZeitpunkt)
+            </p>
+            <textarea id="pasteArea" placeholder="Hier die Tabelle aus Excel einfügen (Strg+V / Cmd+V)..." style="width: 100%; min-height: 200px; padding: 1rem; border: 1px solid var(--color-border); border-radius: 6px; font-family: monospace; font-size: 0.9rem; resize: vertical;"></textarea>
+            <div style="margin-top: 1rem;">
+                <button class="btn" onclick="processData()">Daten verarbeiten</button>
+                <button class="btn btn-secondary" onclick="resetAll()">Zurücksetzen</button>
+            </div>
+            <p id="fileName" style="margin-top: 1rem; color: var(--color-text-secondary);"></p>
+        </div>
+
+        <div id="configSection" class="config-section hidden"></div>
+        <div id="statusMessage"></div>
+        <div id="results" class="results-section"></div>
+        <div id="exportSection" class="export-section hidden"></div>
+    </div>
+
+    <script>
+        let currentMode = null;
+        let excelData = [];
+        let vehicleMapping =
